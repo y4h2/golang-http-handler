@@ -17,19 +17,19 @@ type Handler func(ResponseWriter, *Request) error
 
 // ServeHTTP implements http.Handler interface.
 func (fn Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	apiWriter := NewResponse(w)
-	req := NewRequest()       // set up all
-	err := fn(apiWriter, req) // Call handler function
+	writer := NewResponse(w)
+	req := NewRequest(r)
+	err := fn(writer, req) // Call handler function
 	if err == nil {
 		return
 	}
 
 	if clientErr, ok := ToClientError(err); ok {
 		log.Printf("Client side error: %s", clientErr.Error())
-		apiWriter.WriteError(clientErr.StatusCode(), clientErr.Error())
+		writer.WriteError(clientErr.StatusCode(), clientErr.Error())
 		return
 	}
 
 	log.Printf("internal handler error: %s", err.Error())
-	apiWriter.WriteError(http.StatusInternalServerError, "internal error")
+	writer.WriteError(http.StatusInternalServerError, "internal error")
 }

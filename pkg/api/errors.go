@@ -23,16 +23,18 @@ type ClientError interface {
 	StatusCode() int
 }
 
-// NewNotFoundErr is the constructor of NotFoundErr
+// NewNotFoundErr returns a 404 client side error
 func NewNotFoundErr(message string) ClientErr {
 	return NewClientErr(http.StatusNotFound, message)
 }
 
+// ClientErr defines the general client side error
 type ClientErr struct {
 	statusCode int
 	message    string
 }
 
+// NewClientErr is the constructor of ClientErr
 func NewClientErr(statusCode int, message string) ClientErr {
 	return ClientErr{
 		statusCode: statusCode,
@@ -40,6 +42,7 @@ func NewClientErr(statusCode int, message string) ClientErr {
 	}
 }
 
+// StatusCode return status code
 func (err ClientErr) StatusCode() int {
 	return err.statusCode
 }
@@ -47,6 +50,7 @@ func (err ClientErr) StatusCode() int {
 // IsClientError marks NotFoundErr as ClientError
 func (err ClientErr) IsClientError() {}
 
+// Error returns the error message
 func (err ClientErr) Error() string {
 	return err.message
 }
